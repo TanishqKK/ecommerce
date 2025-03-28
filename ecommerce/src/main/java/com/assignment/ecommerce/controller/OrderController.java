@@ -5,6 +5,7 @@ import com.assignment.ecommerce.model.Order;
 import com.assignment.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,8 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/all-orders")
+    @GetMapping("/orders")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
@@ -30,17 +32,19 @@ public class OrderController {
         return orderService.createOrder(order);
     }
 
-    @GetMapping("/orderById/{id}")
+    @GetMapping("/{id}")
     public Order findOrderById(@PathVariable Long id) {
         return orderService.findOrderById(id);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public Order updateOrder(@RequestBody Order order) {
         return orderService.updateOrder(order);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteOrder(@PathVariable Long id) throws OrderNotFoundException {
         return orderService.deleteOrder(id);
     }
